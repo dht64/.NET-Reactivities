@@ -1,9 +1,11 @@
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 import { Grid } from "semantic-ui-react";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 // import { Activity } from "../../../app/models/activity";
 import { useStore } from "../../../app/stores/store";
-import ActivityDetails from "../details/ActivityDetails";
-import ActivityForm from "../form/ActivityForm";
+// import ActivityDetails from "../details/ActivityDetails";
+// import ActivityForm from "../form/ActivityForm";
 import ActivityList from "./ActivityList";
 
 // interface Props {
@@ -21,7 +23,26 @@ import ActivityList from "./ActivityList";
 
 export default observer(function ActivityDashboard() {
     const { activityStore } = useStore();
-    const { selectedActivity, editMode } = activityStore;
+    const { loadActivities, activityRegistry } = activityStore;
+    // const { selectedActivity, editMode } = activityStore;
+
+    useEffect(() => {
+        // agent.Activities.list().then(response => {
+        //   let activities: Activity[] = [];
+        //   response.forEach(activity => {
+        //     activity.date = activity.date.split('T')[0];
+        //     activities.push(activity);
+        //   })
+        //   setActivities(activities);
+        //   setLoading(false);
+        // })
+        // axios.get<Activity[]>('http://localhost:5000/api/activities').then(response => {
+        //   setActivities(response.data)
+        // })
+        if (activityRegistry.size <= 1) loadActivities();
+    }, [activityRegistry.size, loadActivities])
+
+    if (activityStore.loadingInitial) return <LoadingComponent content='Loading app' />
 
     return (
         <Grid>
@@ -29,10 +50,7 @@ export default observer(function ActivityDashboard() {
                 <ActivityList />
             </Grid.Column>
             <Grid.Column width='6'>
-                {selectedActivity && !editMode &&
-                    <ActivityDetails />}
-                {editMode &&
-                    <ActivityForm />}
+                <h2>Activity filters</h2>
             </Grid.Column>
         </Grid>
     )
